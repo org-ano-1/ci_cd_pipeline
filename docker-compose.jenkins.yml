@@ -1,0 +1,32 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/shyhoon/Documents/Node JS/API_Avengers/ci_cd_pipeline:/workspace
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    depends_on:
+      - dind
+    networks:
+      - jenkins
+
+  dind:
+    image: docker:dind
+    container_name: dind
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - jenkins
+
+volumes:
+  jenkins_home:
+
+networks:
+  jenkins:
